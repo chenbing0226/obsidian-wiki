@@ -2,51 +2,50 @@
 name: wiki-setup
 description: >
   Initialize a new Obsidian wiki vault with the correct structure, special files, and configuration.
-  Use this skill when the user wants to set up a new wiki from scratch, initialize the vault structure,
-  create the .env file, or says things like "set up my wiki", "initialize obsidian", "create a new vault",
-  "get started with the wiki". Also use when the user needs to reconfigure their existing vault or
-  fix a broken setup.
+  Triggers: "set up my wiki", "initialize obsidian", "create a new vault", "get started with the wiki",
+  reconfigure vault, fix broken setup.
+  中文：初始化或修复 Obsidian 知识库；用户说「搭建 wiki」「初始化 vault」「创建新库」「配置 .env」「修复 wiki 设置」时使用本技能。
 ---
 
-# Obsidian Setup — Vault Initialization
+# Obsidian 搭建 — 知识库初始化
 
-You are setting up a new Obsidian wiki vault (or repairing an existing one).
+你正在搭建新的 Obsidian wiki 知识库（或修复已有知识库）。
 
-## Step 1: Create .env
+## 步骤 1：创建 .env
 
-If `.env` doesn't exist, create it from `.env.example`. Ask the user for:
+若不存在 `.env`，从 `.env.example` 复制并创建。向用户确认：
 
-1. **Where should the vault live?** → `OBSIDIAN_VAULT_PATH`
-   - Default: `~/Documents/obsidian-wiki-vault`
-   - Must be an absolute path (after expansion)
+1. **知识库放在哪里？** → `OBSIDIAN_VAULT_PATH`
+   - 默认：`~/Documents/obsidian-wiki-vault`
+   - 须为绝对路径（展开 `~` 之后）
 
-2. **Where are your source documents?** → `OBSIDIAN_SOURCES_DIR`
-   - Can be multiple paths, comma-separated
-   - Default: `~/Documents`
+2. **源文档目录在哪里？** → `OBSIDIAN_SOURCES_DIR`
+   - 可为多个路径，逗号分隔
+   - 默认：`~/Documents`
 
-3. **Want to import Claude history?** → `CLAUDE_HISTORY_PATH`
-   - Default: auto-discovers from `~/.claude`
-   - Set explicitly if Claude data is elsewhere
+3. **是否导入 Claude 历史？** → `CLAUDE_HISTORY_PATH`
+   - 默认：从 `~/.claude` 自动发现
+   - 若数据在其他位置则显式设置
 
-4. **Have QMD installed?** → `QMD_WIKI_COLLECTION` / `QMD_PAPERS_COLLECTION` / `QMD_TRANSPORT`
-   - Optional. Enables semantic search in `wiki-query` and source discovery in `wiki-ingest`.
-   - Default to `QMD_TRANSPORT=mcp` unless the user wants the agent to call the local `qmd` CLI directly.
-   - If using CLI mode, set `QMD_CLI_SEARCH_MODE=quality` by default; suggest `balanced` if reranking is too slow.
-   - If unsure, skip for now — both skills fall back to `Grep` automatically.
-   - Install instructions: see `.env.example` (QMD section).
+4. **是否已安装 QMD？** → `QMD_WIKI_COLLECTION` / `QMD_PAPERS_COLLECTION` / `QMD_TRANSPORT`
+   - 可选。启用后可在 `wiki-query` 中做语义检索，在 `wiki-ingest` 中发现相关文献。
+   - 除非用户希望代理直接调用本机 `qmd` CLI，否则默认 `QMD_TRANSPORT=mcp`。
+   - 若使用 CLI 模式，默认设 `QMD_CLI_SEARCH_MODE=quality`；若重排序过慢可建议 `balanced`。
+   - 若不确定可先跳过 — 两个技能都会自动回退到 `Grep`。
+   - 安装说明：见 `.env.example`（QMD 小节）。
 
-## Step 2: Create Vault Directory Structure
+## 步骤 2：创建知识库目录结构
 
 ```bash
 mkdir -p "$OBSIDIAN_VAULT_PATH"/{concepts,entities,skills,references,synthesis,journal,projects,_archives,_raw,.obsidian}
 ```
 
-- `.obsidian/` — Obsidian's own config. Creates vault recognition.
-- `projects/` — Per-project knowledge (populated during ingest).
-- `_archives/` — Stores wiki snapshots for rebuild/restore operations.
-- `_raw/` — Staging area for unprocessed drafts. Drop rough notes here; `wiki-ingest` will promote them to proper wiki pages and delete the originals.
+- `.obsidian/` — Obsidian 自身配置，用于被识别为库。
+- `projects/` — 按项目的知识（在导入过程中填充）。
+- `_archives/` — 存放 wiki 快照，供重建/恢复使用。
+- `_raw/` — 未加工草稿暂存区。把零碎笔记丢在这里；`wiki-ingest` 会将其提升为正式 wiki 页并删除原文件。
 
-## Step 3: Create Special Files
+## 步骤 3：创建特殊文件
 
 ### index.md
 
@@ -57,11 +56,11 @@ title: Wiki Index
 
 # Wiki Index
 
-*This index is automatically maintained. Last updated: TIMESTAMP*
+*本索引由系统自动维护。上次更新：TIMESTAMP*
 
 ## Concepts
 
-*No pages yet. Use `wiki-ingest` to add your first source.*
+*尚无页面。使用 `wiki-ingest` 添加第一个来源。*
 
 ## Entities
 
@@ -96,28 +95,28 @@ updated: TIMESTAMP
 
 # Hot Cache
 
-*A ~500-word semantic snapshot of recent activity. Updated after every major write operation.*
+*约 500 字的近期活动语义快照。每次重大写入后更新。*
 
 ## Recent Activity
 
-- [TIMESTAMP] INIT — vault created at OBSIDIAN_VAULT_PATH
+- [TIMESTAMP] INIT — 知识库创建于 OBSIDIAN_VAULT_PATH
 
 ## Active Threads
 
-*None yet — start ingesting sources to populate.*
+*尚无 — 开始导入来源以填充。*
 
 ## Key Takeaways
 
-*None yet.*
+*尚无。*
 
 ## Flagged Contradictions
 
-*None yet.*
+*尚无。*
 ```
 
-## Step 4: Create .obsidian Configuration
+## 步骤 4：创建 .obsidian 配置
 
-Create minimal Obsidian config for a good out-of-box experience:
+创建最小 Obsidian 配置以获得开箱即用体验：
 
 ### .obsidian/app.json
 ```json
@@ -136,30 +135,32 @@ Create minimal Obsidian config for a good out-of-box experience:
 }
 ```
 
-## Step 5: Recommend Obsidian Plugins
+## 步骤 5：推荐 Obsidian 插件
 
-Tell the user about these recommended community plugins (they install manually):
+告知用户以下社区插件（需手动安装）：
 
-1. **Dataview** — Query page metadata, create dynamic tables. Essential for a wiki.
-2. **Graph Analysis** — Enhanced graph view for exploring connections.
-3. **Templater** — If they want to create pages manually using templates.
-4. **Obsidian Git** — Auto-backup the vault to a git repo.
+1. **Dataview** — 查询页面元数据、构建动态表格。对 wiki 很实用。
+2. **Graph Analysis** — 增强图谱，便于探索关联。
+3. **Templater** — 若希望用模板手动建页。
+4. **Obsidian Git** — 将知识库自动备份到 git 仓库。
 
-## Step 6: Verify Setup
+## 步骤 6：验证搭建
 
-Run a quick sanity check:
-- [ ] Vault directory exists with: `concepts/`, `entities/`, `skills/`, `references/`, `synthesis/`, `journal/`, `projects/`, `_archives/`, `_raw/`
-- [ ] `index.md` exists at vault root
-- [ ] `log.md` exists at vault root
-- [ ] `hot.md` exists at vault root
-- [ ] `.env` has `OBSIDIAN_VAULT_PATH` set
-- [ ] `.obsidian/` directory exists
-- [ ] Source directories (if configured) exist and are readable
+快速自检：
 
-Report the results and tell the user they can now:
-1. Open the vault in Obsidian (File → Open Vault → select the directory)
-2. Run `wiki-status` to see what's available to ingest
-3. Run `wiki-ingest` to add their first sources
-4. Run `claude-history-ingest` to mine their Claude conversations
-5. Run `codex-history-ingest` to mine their Codex sessions (if they use Codex)
-6. Run `wiki-status` again anytime to check the delta
+- [ ] 知识库目录存在且包含：`concepts/`、`entities/`、`skills/`、`references/`、`synthesis/`、`journal/`、`projects/`、`_archives/`、`_raw/`
+- [ ] 根目录存在 `index.md`
+- [ ] 根目录存在 `log.md`
+- [ ] 根目录存在 `hot.md`
+- [ ] `.env` 中已设置 `OBSIDIAN_VAULT_PATH`
+- [ ] 存在 `.obsidian/` 目录
+- [ ] 若已配置源目录，则这些目录存在且可读
+
+汇报结果，并告知用户现在可以：
+
+1. 在 Obsidian 中打开该库（文件 → 打开库 → 选择目录）
+2. 运行 `wiki-status` 查看可导入内容
+3. 运行 `wiki-ingest` 添加第一批来源
+4. 运行 `claude-history-ingest` 挖掘 Claude 对话
+5. 若使用 Codex，可运行 `codex-history-ingest` 挖掘会话
+6. 随时再次运行 `wiki-status` 查看增量
